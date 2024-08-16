@@ -1,4 +1,4 @@
-#! /usr/bin/env/ node
+#! /usr/bin/env node
 import inquirer from "inquirer";
 for (let randomNumber = 1; randomNumber <= 100; randomNumber++) {
     let myBalance = 0;
