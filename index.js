@@ -1,90 +1,95 @@
 #! /usr/bin/env node
 import inquirer from "inquirer";
-for (let randomNumber = 1; randomNumber <= 100; randomNumber++) {
-    let myBalance = 0;
-    let answer = await inquirer.prompt([
-        {
-            name: "students",
-            type: "input",
-            message: "enter student name:",
-            validate: function (value) {
-                if (value.trim() !== "") {
-                    return true;
-                }
-                return "please enter a non empty value";
-            },
-        },
-        {
-            name: "courses",
-            type: "list",
-            message: "select the course to enroll:",
-            choices: ["ms office", "html", "javascript", "typescript", "python"],
-        },
-    ]);
-    const tutionfee = {
-        "ms office": 2000,
-        html: 2500,
-        javascript: 5000,
-        typescript: 6000,
-        python: 10000,
-    };
-    console.log(`\ntution fee: ${tutionfee[answer.courses]}\n`);
-    console.log(`balance:${myBalance}\n`);
-    let paymentType = await inquirer.prompt([
-        {
-            name: "payment",
-            type: "list",
-            message: "enter payment method",
-            choices: ["bank tranfer", "easypaisa", "jazzcash"],
-        },
-        {
-            name: "amount",
-            type: "input",
-            message: "tranfer money",
-            validate: function (value) {
-                if (value.trim() !== "") {
-                    return true;
-                }
-                return "please enter a non-empty value";
-            },
-        },
-    ]);
-    console.log(`you select payment method ${paymentType.payment}`);
-    const tutionfees = tutionfee[answer.courses];
-    const paymentAmount = parseFloat(paymentType.amount);
-    if (tutionfees === paymentAmount) {
-        console.log(`congratulation! you have successfully enrolled in ${answer.courses}\n`);
-        let ans = await inquirer.prompt([
+// Main function to handle the student enrollment process
+async function manageStudents() {
+    for (let randomNumber = 1; randomNumber <= 100; randomNumber++) {
+        let myBalance = 0;
+        const answer = await inquirer.prompt([
             {
-                name: "select",
+                name: "students",
+                type: "input",
+                message: "Enter student name:",
+                validate: function (value) {
+                    if (value.trim() !== "") {
+                        return true;
+                    }
+                    return "Please enter a non-empty value.";
+                },
+            },
+            {
+                name: "courses",
                 type: "list",
-                message: "what would you like to do next",
-                choices: ["view status", "exit"],
+                message: "Select the course to enroll:",
+                choices: ["ms office", "html", "javascript", "typescript", "python"],
             },
         ]);
-        if (ans.select === "view status") {
-            console.log("\n*****status*****");
-            console.log(`student name: ${answer.students}`);
-            console.log(`student id: ${randomNumber}`);
-            console.log(`courses: ${answer.courses}`);
-            console.log(`tution fees paid: ${paymentAmount}`);
-            console.log(`balance ${(myBalance += paymentAmount)}`);
+        const tutionfee = {
+            "ms office": 2000,
+            html: 2500,
+            javascript: 5000,
+            typescript: 6000,
+            python: 10000,
+        };
+        console.log(`\nTuition fee: ${tutionfee[answer.courses]}\n`);
+        console.log(`Balance: ${myBalance}\n`);
+        const paymentType = await inquirer.prompt([
+            {
+                name: "payment",
+                type: "list",
+                message: "Enter payment method:",
+                choices: ["bank transfer", "easypaisa", "jazzcash"],
+            },
+            {
+                name: "amount",
+                type: "input",
+                message: "Transfer money:",
+                validate: function (value) {
+                    if (value.trim() !== "") {
+                        return true;
+                    }
+                    return "Please enter a non-empty value.";
+                },
+            },
+        ]);
+        console.log(`You selected payment method: ${paymentType.payment}`);
+        const tuitionFee = tutionfee[answer.courses];
+        const paymentAmount = parseFloat(paymentType.amount);
+        if (tuitionFee === paymentAmount) {
+            console.log(`Congratulations! You have successfully enrolled in ${answer.courses}\n`);
+            const nextStep = await inquirer.prompt([
+                {
+                    name: "select",
+                    type: "list",
+                    message: "What would you like to do next?",
+                    choices: ["view status", "exit"],
+                },
+            ]);
+            if (nextStep.select === "view status") {
+                console.log("\n***** Status *****");
+                console.log(`Student Name: ${answer.students}`);
+                console.log(`Student ID: ${randomNumber}`);
+                console.log(`Course: ${answer.courses}`);
+                console.log(`Tuition Fees Paid: ${paymentAmount}`);
+                console.log(`Balance: ${(myBalance += paymentAmount)}`);
+            }
+            else {
+                console.log("\nExiting student management...\n");
+            }
         }
         else {
-            console.log("\nexiting student management\n");
+            console.log("Invalid amount for the selected course.\n");
+        }
+        const addMore = await inquirer.prompt([
+            {
+                name: "more",
+                type: "confirm",
+                message: "Would you like to add more students?",
+            },
+        ]);
+        if (!addMore.more) {
+            break;
         }
     }
-    else {
-        console.log("invalid amount due to courses\n");
-    }
-    let addmore = await inquirer.prompt([
-        {
-            name: "more",
-            type: "confirm",
-            message: "wanna add more",
-        },
-    ]);
-    if (addmore.more === false) {
-        randomNumber = 101;
-    }
 }
+// Start the student management process
+manageStudents();
